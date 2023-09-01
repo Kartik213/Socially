@@ -2,12 +2,38 @@
 
 #### Website Link: https://sociallyy.netlify.app/
 
-##### Note: Potential Backend Delay 
+##### Note: Potential Backend Delay
+
 - Please be aware that there may be delays in the response time of this application, especially during periods of high usage. The backend of this application is hosted on an unpaid server, which may result in longer response times.
 
 ## Overview
 
 This is a Fullstack MERN application that allows users to create accounts, authenticate, like posts, and toggle between light and dark modes. It uses React for the frontend, Express and Node.js for the backend, MongoDB for the database, and Material-UI for the user interface.
+
+## Authentication
+
+- The app uses JWT for authentication. Users can sign up and log in securely.
+- Authentication routes are available in the `/server/routes/auth.js` file.
+- You can expand the authentication system and add features like password reset and email verification if needed.
+
+## Create Post
+
+- Users have the ability to create new posts, each consisting of an image and a caption.
+- The post user create will be saved to the database and displayed in the feed of other users to see and interact with.
+
+## Add and Remove Friends
+
+- Users have the ability to build and manage their friend lists. You can add people to your friend list and, if needed, remove them.
+
+## Likes Functionality
+
+- Users can like and unlike posts.
+- The likes are stored in the MongoDB database.
+
+## Dark Mode
+
+- The app includes a dark mode feature.
+- Dark mode styles can be customized in the `/client/src/theme.js` file.
 
 ## Prerequisites
 
@@ -56,22 +82,6 @@ npm run dev
 ```
 
 The React development server will start, and the app will be accessible at `http://localhost:3000`.
-
-## Authentication
-
-- The app uses JWT for authentication. Users can sign up and log in securely.
-- Authentication routes are available in the `/server/routes/auth.js` file.
-- You can expand the authentication system and add features like password reset and email verification if needed.
-
-## Likes Functionality
-
-- Users can like and unlike posts.
-- The likes are stored in the MongoDB database.
-
-## Dark Mode
-
-- The app includes a dark mode feature.
-- Dark mode styles can be customized in the `/client/src/theme.js` file.
 
 ## Deployment
 
