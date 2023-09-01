@@ -28,9 +28,7 @@ const SinglePost = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  // let isLiked = Boolean(likes[loggedInUserId]);
   const [isLiked, setIsLiked] = useState(Boolean(likes[loggedInUserId]));
-  // const likeCount = Object.keys(likes).length;
   const [likeCount, setLikeCount] = useState(
     Number(Object.keys(likes).length)
   );
