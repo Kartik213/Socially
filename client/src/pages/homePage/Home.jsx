@@ -1,12 +1,10 @@
-import React from "react";
 import Navbar from "../navbar/Navbar";
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import UserSection from "../widget/UserSection.jsx";
 import NewPost from "../widget/NewPost.jsx";
-import Feed from "../widget/Feed";
-import Advertisment from "../widget/Advertisment";
-import FriendList from "../widget/FriendList";
+import Feed from "../widget/Feed.jsx";
+import FriendList from "../widget/FriendList.jsx";
 
 const Home = () => {
   const notMobile = useMediaQuery("(min-width: 1000px)");
@@ -29,12 +27,10 @@ const Home = () => {
           mt={notMobile ? undefined : "2rem"}
         >
           <NewPost picturePath={picturePath} />
-          <Feed userId={_id} />
+          <Feed userId={_id} isProfile={false} />
         </Box>
         {notMobile && (
           <Box flexBasis="26%">
-            <Advertisment />
-            <Box m="2rem 0" />
             <FriendList userId={_id} />
           </Box>
         )}

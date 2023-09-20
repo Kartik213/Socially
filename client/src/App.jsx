@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme.js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 
@@ -23,11 +25,29 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/home" element={ isAuth ? <Home /> : <Navigate to="/" />} />
-            <Route path="/profile/:userId" element={ isAuth ? <Profile /> : <Navigate to="/" />} />
+            <Route
+              path="/home"
+              element={isAuth ? <Home /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/profile/:userId"
+              element={isAuth ? <Profile /> : <Navigate to="/" />}
+            />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={mode === "dark" ? mode : "colored"}
+      />
     </div>
   );
 }

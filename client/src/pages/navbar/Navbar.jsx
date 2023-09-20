@@ -9,6 +9,7 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import {
   Search,
@@ -24,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "../../state/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import Flexbetween from "../../components/Flexbetween.jsx";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos.js";
 
 const Navbar = () => {
   const [isMenuToggled, setisMenuToggled] = useState(false);
@@ -40,12 +42,20 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  // const fullName = "Kartik Gupta";
 
   return (
     <Flexbetween padding="1rem 6%" backgroundColor={alt}>
       {/* logo */}
       <Flexbetween gap="1.75rem">
+        {!notMobile && (
+          <IconButton
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+        )}
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -60,27 +70,12 @@ const Navbar = () => {
         >
           Socially
         </Typography>
-        {/* if the screen width is more than 1000px then display search bar else do not display search bar */}
-        {notMobile && (
-          <Flexbetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </Flexbetween>
-        )}
       </Flexbetween>
-
       {/* if the screen width is more than 1000px then display the icons in line else display a menu */}
       {notMobile ? (
         <Flexbetween gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
-            {theme.palette.mode === "neutralDark" ? (
+            {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
             ) : (
               <LightMode sx={{ color: neutralDark, fontSize: "25px" }} />
@@ -108,10 +103,23 @@ const Navbar = () => {
               }}
               input={<InputBase />}
             >
-              <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
+              {/* <MenuItem value={fullName}>
+                <Button onClick={()=>{
+                  navigate(`/profile/${user?._id}`);
+                }}>
+                  {fullName}
+                </Button>
+              </MenuItem> */}
+              <MenuItem value={fullName} 
+                  onClick={() => {
+                    navigate(`/profile/${user?._id}`);
+                  }}
+                >
+                  {fullName}
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              <MenuItem onClick={() => dispatch(setLogout())}>
+                Log Out
+              </MenuItem>
             </Select>
           </FormControl>
         </Flexbetween>
@@ -142,17 +150,15 @@ const Navbar = () => {
 
           {/* Menu items when the menu is clicked */}
           <Flexbetween
-            display="flex"
             flexDirection="column"
             justifyContent="center"
-            alignItems="center"
             gap="3rem"
           >
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}
             >
-              {theme.palette.mode === "neutralDark" ? (
+              {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
               ) : (
                 <LightMode sx={{ color: neutralDark, fontSize: "25px" }} />
@@ -162,7 +168,7 @@ const Navbar = () => {
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
             {/* fullName and logout drop down menu */}
-            <FormControl variant="standard" value={fullName}>
+            {/* <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
                 sx={{
@@ -179,15 +185,20 @@ const Navbar = () => {
                   },
                 }}
                 input={<InputBase />}
+              > */}
+            <MenuItem value={fullName} 
+                onClick={() => {
+                  navigate(`/profile/${user?._id}`);
+                }}
               >
-                <MenuItem value={fullName}>
-                  <Typography>{fullName}</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
-              </Select>
-            </FormControl>
+                {fullName}
+              {/* <Typography>{fullName}</Typography> */}
+            </MenuItem>
+            <MenuItem onClick={() => dispatch(setLogout())}>
+              Log Out
+            </MenuItem>
+            {/* </Select>
+            </FormControl> */}
           </Flexbetween>
         </Box>
       )}

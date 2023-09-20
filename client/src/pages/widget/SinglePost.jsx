@@ -2,16 +2,19 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
-  ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography, useTheme } from "@mui/material";
 import Flexbetween from "../../components/Flexbetween";
 import Friend from "../../components/Friend";
 import Boxwrapper from "../../components/Boxwrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { setPost } from "../../state/authSlice.js";
 import url from "../../url.js";
+import { toast } from "react-toastify";
+import Loader from "react-js-loader";
 
 const SinglePost = ({
   postId,
@@ -22,19 +25,24 @@ const SinglePost = ({
   picturePath,
   userPicturePath,
   likes,
-  comments,
+  // comments,
 }) => {
-  const [isComments, setIsComments] = useState(false);
+  // const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
+  // const location = useLocation();
+  const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
   const [isLiked, setIsLiked] = useState(Boolean(likes[loggedInUserId]));
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [likeCount, setLikeCount] = useState(
     Number(Object.keys(likes).length)
   );
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const dark = palette.neutral.dark;
 
   const patchLike = async () => {
     setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
@@ -52,6 +60,19 @@ const SinglePost = ({
     );
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+  };
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const response = await fetch(`${url}/posts/${postId}/deletePost`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      navigate(0);
+      toast.success("Post Deleted");
+    } else {
+      toast.error("An error occured.");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -71,7 +92,7 @@ const SinglePost = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`${url}/assets/${picturePath}`}
+          src={picturePath}
         />
       )}
       <Flexbetween mt="0.25rem">
@@ -87,31 +108,64 @@ const SinglePost = ({
             <Typography>{likeCount}</Typography>
           </Flexbetween>
 
-          <Flexbetween gap="0.3rem">
+          {/* <Flexbetween gap="0.3rem">
             <IconButton onClick={() => setIsComments(!isComments)}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
             <Typography>{comments.length}</Typography>
-          </Flexbetween>
+          </Flexbetween> */}
         </Flexbetween>
 
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
+        {loggedInUserId === postUserId && (
+          <IconButton
+            onClick={() => {
+              setIsOpen(true);
+            }}
+          >
+            <Flexbetween>
+              <DeleteIcon />
+              <Typography>DELETE POST</Typography>
+            </Flexbetween>
+          </IconButton>
+        )}
       </Flexbetween>
-      {isComments && (
-        <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
-          <Divider />
-        </Box>
-      )}
+      <Dialog
+        fullWidth
+        open={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+      >
+        <DialogTitle id="alert-delete-title">Delete Post?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Click on Confirm to delete your post.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {isLoading ? (
+            <Loader type="box-up" bgColor={dark} color={dark} size={80} />
+          ) : (
+            <IconButton
+              onClick={handleDelete}
+            >
+              <Flexbetween>
+                <DeleteIcon />
+                <Typography>CONFIRM</Typography>
+              </Flexbetween>
+            </IconButton>
+          )}
+          <IconButton
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <Flexbetween>
+              <Typography>CANCEL</Typography>
+            </Flexbetween>
+          </IconButton>
+        </DialogActions>
+      </Dialog>
     </Boxwrapper>
   );
 };

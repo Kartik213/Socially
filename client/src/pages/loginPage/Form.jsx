@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  LinearProgress
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -16,19 +17,20 @@ import Dropzone from "react-dropzone";
 import Flexbetween from "../../components/Flexbetween";
 import { setLogin } from "../../state/authSlice.js";
 import url from "../../url.js";
+import { toast } from "react-toastify";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
-  location: yup.string().required("required"),
-  occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  firstName: yup.string().required("first name is required"),
+  lastName: yup.string().required("Last name is required"),
+  email: yup.string().email("invalid email").required("Email is required"),
+  password: yup.string().required("Password is required"),
+  location: yup.string().required("Location is required"),
+  occupation: yup.string().required("Occupation is required"),
+  picture: yup.string().required("Picture is required"),
 });
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().email("invalid email").required("Email is required"),
+  password: yup.string().required("Password is required"),
 });
 
 const initialRegisterValue = {
@@ -47,12 +49,14 @@ const initialLoginValue = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const notMobile = useMediaQuery("(min-width: 600px)");
 
   const register = async (values, onSubmitProps) => {
+    setLoading(true);
     // this allows us to send image with form data
     const formData = new FormData();
     for (let value in values) {
@@ -67,13 +71,23 @@ const Form = () => {
       }
     );
     const savedUser = await registerUser.json();
+
+    if(registerUser.ok){
+      toast.success("Account created successfully");
+    }else{
+      toast.error(savedUser.message);
+      return ;
+    }
+
     onSubmitProps.resetForm();
     if (savedUser) {
       setPageType("login");
     }
+    setLoading(false);
   };
 
   const login = async (values, onSubmitProps) => {
+    setLoading(true);
     const logInUser = await fetch(
       `${url}/auth/login`,
       {
@@ -84,6 +98,13 @@ const Form = () => {
     );
     const loggedIn = await logInUser.json();
     onSubmitProps.resetForm();
+
+    if(logInUser.status === 200){
+      toast.success("Logged in successfully");
+    }else{
+      toast.error(loggedIn.message);
+    }
+
     if (loggedIn) {
       dispatch(
         setLogin({
@@ -93,6 +114,7 @@ const Form = () => {
       );
       navigate("/home");
     }
+    setLoading(false);
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -249,6 +271,7 @@ const Form = () => {
             <Button
               fullWidth
               type="submit"
+              disabled={loading}
               sx={{
                 m: "2rem 0",
                 p: "1rem",
@@ -259,6 +282,9 @@ const Form = () => {
             >
               {pageType === "login" ? "LOGIN" : "REGISTER"}
             </Button>
+            {loading &&(
+              <LinearProgress sx={{m: '1rem 0'}}/>
+            )}
             <Typography
               onClick={() => {
                 setPageType(pageType === "login" ? "register" : "login");

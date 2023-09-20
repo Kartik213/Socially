@@ -1,11 +1,7 @@
 import {
   EditOutlined,
   DeleteOutlined,
-  AttachFileOutlined,
-  GifBoxOutlined,
   ImageOutlined,
-  MicOutlined,
-  MoreHorizOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -15,22 +11,27 @@ import {
   useTheme,
   Button,
   IconButton,
+  LinearProgress,
   useMediaQuery,
 } from "@mui/material";
 import Flexbetween from "../../components/Flexbetween.jsx";
 import Dropzone from "react-dropzone";
 import UserImage from "../../components/UserImage.jsx";
 import Boxwrapper from "../../components/Boxwrapper.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../state/authSlice.js";
 import url from "../../url.js";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 const NewPost = ({ picturePath }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
+  const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -39,6 +40,7 @@ const NewPost = ({ picturePath }) => {
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("userId", _id);
     formData.append("description", post);
@@ -54,13 +56,20 @@ const NewPost = ({ picturePath }) => {
     });
     const posts = await response.json();
     console.log(posts);
-    dispatch(setPosts({ posts }));
+    if (response.ok) {
+      toast.success(posts.message);
+    } else {
+      toast.error(posts.message);
+    }
+    dispatch(setPosts({ posts: posts.posts }));
+    navigate(0);
     setImage(null);
     setPost("");
+    setLoading(false);
   };
 
   return (
-    <Boxwrapper>
+    <Boxwrapper mb={2}>
       <Flexbetween gap="1.5rem">
         <UserImage image={picturePath} />
         <InputBase
@@ -122,7 +131,7 @@ const NewPost = ({ picturePath }) => {
 
       <Divider sx={{ margin: "1.25rem 0" }} />
 
-      <Flexbetween>
+      <Flexbetween mb={loading ? 1 : 0}>
         <Flexbetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
           <ImageOutlined sx={{ color: mediumMain }} />
           <Typography
@@ -133,7 +142,7 @@ const NewPost = ({ picturePath }) => {
           </Typography>
         </Flexbetween>
 
-        {notMobile ? (
+        {/* {notMobile ? (
           <>
             <Flexbetween gap="0.25rem">
               <GifBoxOutlined sx={{ color: mediumMain }} />
@@ -154,20 +163,24 @@ const NewPost = ({ picturePath }) => {
           <Flexbetween gap="0.25rem">
             <MoreHorizOutlined sx={{ color: mediumMain }} />
           </Flexbetween>
-        )}
+        )} */}
 
         <Button
-          disabled={!post}
+          disabled={!post || loading}
           onClick={handlePost}
           sx={{
             color: palette.background.alt,
             backgroundColor: palette.primary.main,
             borderRadius: "3rem",
+            "&:disabled": {
+              backgroundColor: palette.neutral.light
+            }
           }}
         >
           POST
         </Button>
       </Flexbetween>
+      {loading && <LinearProgress/> }
     </Boxwrapper>
   );
 };

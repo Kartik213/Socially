@@ -8,7 +8,7 @@
 
 ## Overview
 
-This is a Fullstack MERN application that allows users to create accounts, authenticate, like posts, and toggle between light and dark modes. It uses React for the frontend, Express and Node.js for the backend, MongoDB for the database, and Material-UI for the user interface.
+This is a Fullstack MERN application that allows users to create accounts, authenticate, create post, delete post, like posts, and toggle between light and dark modes. It uses React for the frontend, Express and Node.js for the backend, MongoDB for the database, and Material-UI for the user interface.
 
 ## Authentication
 
@@ -16,10 +16,11 @@ This is a Fullstack MERN application that allows users to create accounts, authe
 - Authentication routes are available in the `/server/routes/auth.js` file.
 - You can expand the authentication system and add features like password reset and email verification if needed.
 
-## Create Post
+## Create Post and Delete Post
 
 - Users have the ability to create new posts, each consisting of an image and a caption.
 - The post user create will be saved to the database and displayed in the feed of other users to see and interact with.
+- User can also delete the post.
 
 ## Add and Remove Friends
 
@@ -99,7 +100,6 @@ The React development server will start, and the app will be accessible at `http
 - `/client/src/components`: React components for the frontend.
 - `/client/src/pages`: Contains react component for different pages.
 - `/client/src/state`: React-redux for state managment.
-- `/client/src/utils`: Utility functions and API calls.
 
 ## Contributing
 

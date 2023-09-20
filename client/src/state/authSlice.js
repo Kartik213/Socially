@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+ import { createSlice } from "@reduxjs/toolkit";
+ import {toast} from "react-toastify";
 
 const initialState = {
   mode: "light",
@@ -22,6 +23,7 @@ export const authSlice = createSlice({
     setLogout: (state) => {
       state.user = null;
       state.token = null;
+      toast.success("Logged out successfully");
     },
     setFriends: (state, action) => {
       if (state.user) {
