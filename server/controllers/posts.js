@@ -13,6 +13,7 @@ export const createPost = async (req, res) => {
 
     if (file) {
       fileUrl = getDataUri(file);
+
       cloudUri = await cloudinary.uploader.upload(fileUrl.content);
     }
 
@@ -28,12 +29,11 @@ export const createPost = async (req, res) => {
       likes: {},
       // comments: [],
     });
+
     await newPost.save();
-    // const post = Post.find();
     res.status(201).json({
       message: "Post Uploaded Successfully",
       post: newPost,
-      // post: post,
     });
   } catch (err) {
     res.status(409).json({ message: err.message });
@@ -61,8 +61,7 @@ export const getFeedPosts = async (req, res) => {
 
 export const getUserPosts = async (req, res) => {
   try {
-    // const id = req.params.id;
-    const {id} = req.params;
+    const id = req.params.id;
     const page = Number(req.query.page) || 1;
     const totalPosts = await Post.find({ userId: id }).countDocuments();
     const items_per_page = process.env.ITEMS_PER_PAGE;
@@ -109,22 +108,16 @@ export const likePost = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
-    // await Comment.deleteMany({
-    //   postId: postId,
-    // });
+
     const post = await Post.findById(postId);
     if (!post) {
       const error = new Error("Post not found.");
       throw error;
     }
-    console.log(post.imageId);
     if (post.imageId) {
       await cloudinary.uploader.destroy(post.imageId);
-      // deleted cloudinary
     }
-
     await Post.findByIdAndRemove(postId);
-
     res.status(204).json({
       message: "Post Deleted",
     });

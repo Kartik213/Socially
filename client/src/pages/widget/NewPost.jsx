@@ -54,18 +54,31 @@ const NewPost = ({ picturePath }) => {
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
-    const posts = await response.json();
-    console.log(posts);
+
+    console.log(response);
+     const data = await response.json();
+
+     const postsResponse = await fetch(
+       `${url}/posts`,
+       {
+         method: "GET",
+         headers: { Authorization: `Bearer ${token}` },
+       }
+     );
+     const posts = await postsResponse.json();
+
+    // const posts = await response.json();
+    dispatch(setPosts({ posts: posts.posts }));
+    // navigate(0);
+    setImage(null);
+    setPost("");
+    setLoading(false);
     if (response.ok) {
       toast.success(posts.message);
     } else {
       toast.error(posts.message);
     }
-    dispatch(setPosts({ posts: posts.posts }));
-    navigate(0);
-    setImage(null);
-    setPost("");
-    setLoading(false);
+
   };
 
   return (

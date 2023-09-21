@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import cloudinary from "cloudinary";
-
 import User from "../models/User.js";
+import cloudinary from "cloudinary";
 import getDataUri from "../utils/dataUri.js";
 
 /* REGISTER USER */
